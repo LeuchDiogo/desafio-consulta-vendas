@@ -31,10 +31,6 @@ public class SaleService {
 			return repository.searchBySummarySales(minDate, maxDate);
 	}
 
-	public Page<ReportDTO> searchByReport(LocalDate date, Pageable pageable){
-		return repository.searchSalesReport(date, pageable);
-	}
-
 	public Page<ReportDTO> searchReportBySeller(LocalDate minDate, LocalDate maxDate, String name, Pageable pageable) {
 		return repository.searchSaleSellerName(minDate, maxDate, name, pageable);
 	}

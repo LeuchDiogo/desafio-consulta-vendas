@@ -25,7 +25,7 @@ public class SaleController {
 
 	@Autowired
 	private SaleService service;
-	
+
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<SaleMinDTO> findById(@PathVariable Long id) {
 		SaleMinDTO dto = service.findById(id);
@@ -34,24 +34,18 @@ public class SaleController {
 
 	@GetMapping(value = "/report")
 	public ResponseEntity<Page<ReportDTO>> getReport(
-				@RequestParam(value = "minDate", required = false) String minDateStr,
-				@RequestParam(value = "maxDate", required = false) String maxDateStr,
-				@RequestParam(value = "name", required = false) String name, Pageable pageable) {
-		if (minDateStr == null && maxDateStr  == null && name == null)
-		{
-			LocalDate date = LocalDate.now().minusYears(1);
-			Page<ReportDTO> dto = service.searchByReport(date, pageable);
-			return ResponseEntity.ok(dto);
-		}else
-		{
-			LocalDate minDate = LocalDate.parse(minDateStr);
-			LocalDate maxDate = LocalDate.parse(maxDateStr);
+			@RequestParam(value = "minDate", required = false) String minDateStr,
+			@RequestParam(value = "maxDate", required = false) String maxDateStr,
+			@RequestParam(value = "name", required = false) String nameStr, Pageable pageable)
+	{
+		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		LocalDate maxDate = (maxDateStr == null) ? today : LocalDate.parse(maxDateStr);
+		LocalDate minDate = (minDateStr == null) ? maxDate.minusYears(1L) : LocalDate.parse(minDateStr);
 
-			Page<ReportDTO> dto = service.searchReportBySeller(minDate, maxDate, name, pageable);
-			return ResponseEntity.ok(dto);
-		}
+		String name = (nameStr == null) ? null : nameStr;
+		Page<ReportDTO> dto = service.searchReportBySeller(minDate, maxDate, name, pageable);
+		return ResponseEntity.ok(dto);
 	}
-
 	@GetMapping("/summary")
 	public ResponseEntity<List<SummaryMinDTO>> getSummary(
 			@RequestParam(required = false) String minDate,
@@ -67,3 +61,6 @@ public class SaleController {
 
 
 }
+
+
+
